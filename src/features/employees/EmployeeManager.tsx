@@ -65,7 +65,9 @@ export function EmployeeManager() {
     <div className="container mx-auto max-w-6xl p-6">
       <Card className="shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-2xl">Quản lý nhân viên</CardTitle>
+          <CardTitle className="text-4xl text-blue-500">
+            Quản lý nhân viên
+          </CardTitle>
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
               <Button size="sm">+ Thêm nhân viên</Button>
