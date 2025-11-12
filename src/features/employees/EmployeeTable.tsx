@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Employee } from "./types";
 
 export type SortKey = "name" | "address";
@@ -35,16 +35,18 @@ export function EmployeeTable(props: EmployeeTableProps) {
     }
   }
 
-  const sorted = [...data].sort((a, b) => {
-    const valA = (a[sortKey] || "").toString().toLowerCase();
-    const valB = (b[sortKey] || "").toString().toLowerCase();
-    if (valA < valB) return sortDir === "asc" ? -1 : 1;
-    if (valA > valB) return sortDir === "asc" ? 1 : -1;
-    return 0;
-  });
+  const sorted = useMemo(() => {
+    return [...data].sort((a, b) => {
+      const valA = (a[sortKey] || "").toString().toLowerCase();
+      const valB = (b[sortKey] || "").toString().toLowerCase();
+      if (valA < valB) return sortDir === "asc" ? -1 : 1;
+      if (valA > valB) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [data, sortDir, sortKey]);
 
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="rounded-lg border border-slate-200 bg-white">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
@@ -90,11 +92,11 @@ export function EmployeeTable(props: EmployeeTableProps) {
             <TableRow
               key={emp.id}
               className={cn(
-                idx % 2 === 0 ? "bg-muted/30" : undefined,
-                "hover:bg-muted/60"
+                idx % 2 === 0 ? "bg-slate-50" : undefined,
+                "hover:bg-slate-100"
               )}
             >
-              <TableCell className="font-mono text-xs text-muted-foreground">
+              <TableCell className="font-mono text-xs text-slate-500">
                 {emp.id}
               </TableCell>
               <TableCell className="font-medium">{emp.name}</TableCell>
@@ -130,10 +132,7 @@ export function EmployeeTable(props: EmployeeTableProps) {
           ))}
           {sorted.length === 0 && (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="text-center text-muted-foreground"
-              >
+              <TableCell colSpan={7} className="text-center text-slate-500">
                 Chưa có nhân viên nào
               </TableCell>
             </TableRow>
