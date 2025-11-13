@@ -11,6 +11,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -36,11 +38,60 @@ export function EmployeeManager() {
       email: "b.tran@example.com",
       address: "34 Hai Ba Trung, Q1, HCM",
     },
+    {
+      id: "e0000003",
+      name: "Le Van C",
+      dateOfBirth: "1990-07-22",
+      gender: "Male",
+      email: "c.le@example.com",
+      address: "56 Dinh Tien Hoang, Binh Thanh, HCM",
+    },
+    {
+      id: "e0000004",
+      name: "Pham Thi D",
+      dateOfBirth: "2000-01-15",
+      gender: "Female",
+      email: "d.pham@example.com",
+      address: "789 Nguyen Kiem, Phu Nhuan, HCM",
+    },
+    {
+      id: "e0000005",
+      name: "Hoang Van E",
+      dateOfBirth: "1988-11-05",
+      gender: "Male",
+      email: "e.hoang@example.com",
+      address: "101 Vo Van Tan, Q3, HCM",
+    },
+    {
+      id: "e0000006",
+      name: "Do Thi F",
+      dateOfBirth: "1993-02-28",
+      gender: "Female",
+      email: "f.do@example.com",
+      address: "22 Ly Tu Trong, Q1, HCM",
+    },
+    {
+      id: "e0000007",
+      name: "Vu Van G",
+      dateOfBirth: "1997-09-10",
+      gender: "Male",
+      email: "g.vu@example.com",
+      address: "33 Nguyen Trai, Q5, HCM",
+    },
+    {
+      id: "e0000008",
+      name: "Bui Thi H",
+      dateOfBirth: "1992-12-19",
+      gender: "Other",
+      email: "h.bui@example.com",
+      address: "45 Mac Dinh Chi, Da Kao, Q1, HCM",
+    },
   ]);
 
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   function createEmployee(values: EmployeeFormValues) {
     const newEmp: Employee = { id: generateId(), ...values };
@@ -59,6 +110,13 @@ export function EmployeeManager() {
 
   function deleteEmployee(id: string) {
     setEmployees((prev) => prev.filter((e) => e.id !== id));
+  }
+
+  function handleConfirmDelete() {
+    if (deleteTargetId) {
+      deleteEmployee(deleteTargetId);
+    }
+    setDeleteTargetId(null);
   }
 
   return (
@@ -92,11 +150,36 @@ export function EmployeeManager() {
                 setEditing(emp);
                 setOpenEdit(true);
               }}
-              onDelete={deleteEmployee}
+              onDelete={(id) => setDeleteTargetId(id)}
             />
           </div>
         </CardContent>
       </Card>
+
+      <Dialog
+        open={!!deleteTargetId}
+        onOpenChange={(v) => {
+          if (!v) setDeleteTargetId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Xác nhận xoá nhân viên</DialogTitle>
+            <DialogDescription>
+              Bạn có chắc chắn muốn xoá nhân viên này không? Hành động này không
+              thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTargetId(null)}>
+              Huỷ
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Xác nhận xoá
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog
         open={openEdit}
