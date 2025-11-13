@@ -1,25 +1,25 @@
 import { useState } from "react";
-import type { Employee, EmployeeFormValues } from "./types";
 import { EmployeeForm } from "./EmployeeForm";
-import { EmployeeTable } from "./EmployeeTable";
+import type { Employee, EmployeeFormValues } from "./types";
 
-import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { v4 as uuidv4 } from "uuid";
 
 function generateId() {
   return uuidv4().slice(0, 8);
 }
 
 export function EmployeeManager() {
-  const [employees, setEmployees] = useState<Employee[]>([
+  const [, setEmployees] = useState<Employee[]>([
     {
       id: "e0000001",
       name: "Nguyen Van A",
@@ -41,6 +41,7 @@ export function EmployeeManager() {
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   function createEmployee(values: EmployeeFormValues) {
     const newEmp: Employee = { id: generateId(), ...values };
@@ -61,42 +62,63 @@ export function EmployeeManager() {
     setEmployees((prev) => prev.filter((e) => e.id !== id));
   }
 
+  function handleConfirmDelete() {
+    if (deleteTargetId) {
+      deleteEmployee(deleteTargetId);
+    }
+    setDeleteTargetId(null);
+  }
+
   return (
-    <div className="container mx-auto max-w-6xl p-6">
-      <Card className="shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-4xl text-blue-500">
+    <div className="container mx-auto max-w-6xl p-6 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
             Quản lý nhân viên
-          </CardTitle>
-          <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-            <DialogTrigger asChild>
-              <Button size="sm">+ Thêm nhân viên</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Thêm nhân viên</DialogTitle>
-              </DialogHeader>
-              <EmployeeForm
-                onSubmit={createEmployee}
-                onCancel={() => setOpenCreate(false)}
-                submitLabel="Tạo mới"
-              />
-            </DialogContent>
-          </Dialog>
-        </CardHeader>
-        <CardContent>
-          <div className="w-full overflow-x-auto">
-            <EmployeeTable
-              data={employees}
-              onEdit={(emp) => {
-                setEditing(emp);
-                setOpenEdit(true);
-              }}
-              onDelete={deleteEmployee}
+          </h1>
+          <p className="text-slate-500">Quản lý thông tin nhân sự và hồ sơ</p>
+        </div>
+        <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+          <DialogTrigger asChild>
+            <Button>+ Thêm nhân viên</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Thêm nhân viên</DialogTitle>
+            </DialogHeader>
+            <EmployeeForm
+              onSubmit={createEmployee}
+              onCancel={() => setOpenCreate(false)}
+              submitLabel="Tạo mới"
             />
-          </div>
-        </CardContent>
-      </Card>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <Dialog
+        open={!!deleteTargetId}
+        onOpenChange={(v) => {
+          if (!v) setDeleteTargetId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Xác nhận xoá nhân viên</DialogTitle>
+            <DialogDescription>
+              Bạn có chắc chắn muốn xoá nhân viên này không? Hành động này không
+              thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTargetId(null)}>
+              Huỷ
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Xác nhận xoá
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog
         open={openEdit}
