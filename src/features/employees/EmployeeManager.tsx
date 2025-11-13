@@ -1,104 +1,90 @@
 import { useState } from "react";
-import { EmployeeForm } from "./EmployeeForm";
 import type { Employee, EmployeeFormValues } from "./types";
+import { EmployeeForm } from "./EmployeeForm";
+import { EmployeeTable } from "./EmployeeTable";
 
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
-import { v4 as uuidv4 } from "uuid";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 function generateId() {
   return uuidv4().slice(0, 8);
 }
 
 export function EmployeeManager() {
-  const [, setEmployees] = useState<Employee[]>([
+  const [employees, setEmployees] = useState<Employee[]>([
+    {
+      id: "e0000001",
+      name: "Nguyen Van A",
+      dateOfBirth: "1995-04-12",
+      gender: "Male",
+      email: "a.nguyen@example.com",
+      address: "12 Le Loi, Q1, HCM",
+    },
+    {
+      id: "e0000002",
+      name: "Tran Thi B",
+      dateOfBirth: "1998-10-30",
+      gender: "Female",
+      email: "b.tran@example.com",
+      address: "34 Hai Ba Trung, Q1, HCM",
+    },
     {
       id: "e0000003",
       name: "Le Van C",
-      dateOfBirth: "1992-01-05",
+      dateOfBirth: "1990-07-22",
       gender: "Male",
       email: "c.le@example.com",
-      address: "56 Nguyen Hue, Q1, HCM",
+      address: "56 Dinh Tien Hoang, Binh Thanh, HCM",
     },
     {
       id: "e0000004",
       name: "Pham Thi D",
-      dateOfBirth: "2000-07-25",
+      dateOfBirth: "2000-01-15",
       gender: "Female",
       email: "d.pham@example.com",
-      address: "78 Cach Mang Thang 8, Q3, HCM",
+      address: "789 Nguyen Kiem, Phu Nhuan, HCM",
     },
     {
       id: "e0000005",
       name: "Hoang Van E",
-      dateOfBirth: "1988-11-18",
+      dateOfBirth: "1988-11-05",
       gender: "Male",
       email: "e.hoang@example.com",
-      address: "90 Dien Bien Phu, Q3, HCM",
+      address: "101 Vo Van Tan, Q3, HCM",
     },
     {
       id: "e0000006",
       name: "Do Thi F",
-      address: "101 Tran Hung Dao, Q5, HCM",
-      email: "f.do@example.com",
+      dateOfBirth: "1993-02-28",
       gender: "Female",
-      dateOfBirth: "1997-03-08",
+      email: "f.do@example.com",
+      address: "22 Ly Tu Trong, Q1, HCM",
     },
     {
       id: "e0000007",
-      name: "Ngo Van G",
-      dateOfBirth: "1990-09-14",
+      name: "Vu Van G",
+      dateOfBirth: "1997-09-10",
       gender: "Male",
-      email: "g.ngo@example.com",
-      address: "112 Ly Thuong Kiet, Q10, HCM",
+      email: "g.vu@example.com",
+      address: "33 Nguyen Trai, Q5, HCM",
     },
     {
       id: "e0000008",
       name: "Bui Thi H",
-      dateOfBirth: "1994-06-03",
-      gender: "Female",
+      dateOfBirth: "1992-12-19",
+      gender: "Other",
       email: "h.bui@example.com",
-      address: "123 Ba Thang Hai, Q10, HCM",
-    },
-    {
-      id: "e0000009",
-      name: "Duong Van I",
-      dateOfBirth: "1985-12-20",
-      gender: "Male",
-      email: "i.duong@example.com",
-      address: "134 Phan Dang Luu, Phu Nhuan, HCM",
-    },
-    {
-      id: "e0000010",
-      name: "Vu Thi J",
-      dateOfBirth: "1996-02-17",
-      gender: "Female",
-      email: "j.vu@example.com",
-      address: "145 Cong Hoa, Tan Binh, HCM",
-    },
-    {
-      id: "e0000011",
-      name: "Huynh Van K",
-      dateOfBirth: "1993-08-11",
-      gender: "Male",
-      email: "k.huynh@example.com",
-      address: "156 Pham Van Dong, Thu Duc, HCM",
-    },
-    {
-      id: "e0000012",
-      name: "Trinh Thi L",
-      dateOfBirth: "1999-05-28",
-      gender: "Female",
-      email: "l.trinh@example.com",
-      address: "167 Nguyen Trai, Q5, HCM",
+      address: "45 Mac Dinh Chi, Da Kao, Q1, HCM",
     },
   ]);
 
@@ -134,30 +120,41 @@ export function EmployeeManager() {
   }
 
   return (
-    <div className="container mx-auto max-w-6xl p-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+    <div className="container mx-auto max-w-6xl p-6">
+      <Card className="shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-4xl text-blue-500">
             Quản lý nhân viên
-          </h1>
-          <p className="text-slate-500">Quản lý thông tin nhân sự và hồ sơ</p>
-        </div>
-        <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-          <DialogTrigger asChild>
-            <Button>+ Thêm nhân viên</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Thêm nhân viên</DialogTitle>
-            </DialogHeader>
-            <EmployeeForm
-              onSubmit={createEmployee}
-              onCancel={() => setOpenCreate(false)}
-              submitLabel="Tạo mới"
+          </CardTitle>
+          <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+            <DialogTrigger asChild>
+              <Button size="sm">+ Thêm nhân viên</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Thêm nhân viên</DialogTitle>
+              </DialogHeader>
+              <EmployeeForm
+                onSubmit={createEmployee}
+                onCancel={() => setOpenCreate(false)}
+                submitLabel="Tạo mới"
+              />
+            </DialogContent>
+          </Dialog>
+        </CardHeader>
+        <CardContent>
+          <div className="w-full overflow-x-auto">
+            <EmployeeTable
+              data={employees}
+              onEdit={(emp) => {
+                setEditing(emp);
+                setOpenEdit(true);
+              }}
+              onDelete={(id) => setDeleteTargetId(id)}
             />
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Dialog
         open={!!deleteTargetId}
